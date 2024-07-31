@@ -1,8 +1,11 @@
 # Patterned-PDF-Generator
 Generate customized PDF documents with various grid, dotted, ruled, and blank patterns
 
-
-Here's a detailed documentation and inline comments for the `PatternedPDF` class and its usage.
+## Python packages required
+```
+numpy
+reportlab
+```
 
 ## Documentation
 
@@ -77,8 +80,8 @@ Draws cue lines on the PDF.
 ## Example Usage
 
 ```python
-output_folder = 'A4_template_2.5 mm'
-pdf_name = 'template 2.5 mm'
+output_folder = 'A4_template_5 mm'
+pdf_name = 'template 5 mm'        # if only single pdf is to be created
 paper_width = 210
 paper_height = 297
 pattern = 'grid'  # Options: 'grid', 'dotted', 'ruled', 'blank'
@@ -87,7 +90,7 @@ grid_color = np.array([210, 210, 210, 255]) / 255
 line_color = np.array([0, 0, 0, 255]) / 255
 background_color = np.array([255, 255, 255, 255]) / 255
 table_color = np.array([210, 210, 210, 255]) / 255
-grid_size = 2.5
+grid_size = 5
 grid_line_width = 0.1
 line_width = 0.25
 title_perc = np.array([0,4])
