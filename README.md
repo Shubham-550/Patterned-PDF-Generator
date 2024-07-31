@@ -1,4 +1,4 @@
-# PatternPDF-Creator
+# Patterned-PDF-Generator
 Generate customized PDF documents with various grid, dotted, ruled, and blank patterns
 
 
