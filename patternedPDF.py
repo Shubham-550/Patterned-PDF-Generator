@@ -3,34 +3,35 @@ import os
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 from reportlab.lib.colors import Color
+import convert_color        # import from file convert color in the working directory
 
 class PatternedPDF:
     def __init__(self, output_folder, pdf_name, paper_width, paper_height, pattern, pattern2, grid_color, line_color,
-                 background_color, table_color, grid_size, grid_line_width, line_width, cue_perc_left, cue_perc_right, summary_perc, title_perc,
+                 bg_color, table_color, grid_size, grid_line_width, line_width, cue_perc_left, cue_perc_right, summary_perc, title_perc,
                  rows, columns, margin):
         """
         Initialize the PatternedPDF object with given parameters.
 
-        :param output_folder: Directory to save the PDF
-        :param pdf_name: Name of the PDF file
-        :param paper_width: Width of the paper in mm
-        :param paper_height: Height of the paper in mm
-        :param pattern: Pattern type ('grid', 'dotted', 'ruled', 'blank')
-        :param pattern2: Additional pattern type ('table' or None)
-        :param grid_color: Color of the grid lines (list of RGB values)
-        :param line_color: Color of the lines (list of RGB values)
-        :param background_color: Background color of the page (list of RGB values)
-        :param table_color: Color of the table lines (list of RGB values)
-        :param grid_size: Size of the grid cells in mm
-        :param grid_line_width: Width of the grid lines in mm
-        :param line_width: Width of the lines in mm
-        :param cue_perc_left: Percentage position of the left cue line
-        :param cue_perc_right: Percentage position of the right cue line
-        :param summary_perc: Percentage position of the summary line
-        :param title_perc: Percentage position of the title line
-        :param rows: Number of rows for the table
-        :param columns: Number of columns for the table
-        :param margin: Page margins (list of 4 values: left, top, right, bottom)
+        :param output_folder:       Directory to save the PDF
+        :param pdf_name:            Name of the PDF file
+        :param paper_width:         Width of the paper in mm
+        :param paper_height:        Height of the paper in mm
+        :param pattern:             Pattern type ('grid', 'dotted', 'ruled', 'blank')
+        :param pattern2:            Additional pattern type ('table' or None)
+        :param grid_color:          Color of the grid lines (list of RGB values)
+        :param line_color:          Color of the lines (list of RGB values)
+        :param bg_color:            bg color of the page (list of RGB values)
+        :param table_color:         Color of the table lines (list of RGB values)
+        :param grid_size:           Size of the grid cells in mm
+        :param grid_line_width:     Width of the grid lines in mm
+        :param line_width:          Width of the lines in mm
+        :param cue_perc_left:       Percentage position of the left cue line
+        :param cue_perc_right:      Percentage position of the right cue line
+        :param summary_perc:        Percentage position of the summary line
+        :param title_perc:          Percentage position of the title line
+        :param rows:                Number of rows for the table
+        :param columns:             Number of columns for the table
+        :param margin:              Page margins (list of 4 values: left, top, right, bottom)
         """
         self.output_folder = output_folder
         self.pdf_name = pdf_name
@@ -40,7 +41,7 @@ class PatternedPDF:
         self.pattern2 = pattern2
         self.grid_color = grid_color
         self.line_color = line_color
-        self.background_color = background_color
+        self.bg_color = bg_color
         self.table_color = table_color
         self.grid_size = grid_size * mm
         self.grid_line_width = grid_line_width * mm
@@ -61,8 +62,8 @@ class PatternedPDF:
         pdf.translate(0, self.paper_height)
         pdf.scale(1, -1)
         
-        # Set the background color
-        pdf.setFillColorRGB(*self.background_color)
+        # Set the bg color
+        pdf.setFillColorRGB(*self.bg_color)
         pdf.rect(0, 0, self.paper_width, self.paper_height, fill=1, stroke=0)
 
         # Calculate the number of grid columns and rows
@@ -309,45 +310,63 @@ class PatternedPDF:
 
 
 # Example Usage:
-output_folder = 'templates/A4 5mm white'
-pdf_name = 'template 5 mm'      # if only single pdf is to be created
+output_folder   = 'templates/A4 7.5mm white - P'
+pdf_name        = 'template 7.5 mm'      # if only single pdf is to be created
 
-paper_width = 210
-paper_height = 297
+paper_width     = 210
+paper_height    = 297
 
-pattern = 'grid'  # 'grid' 'dotted' 'ruled' 'blank'
-pattern2 = 'table'
+pattern     = 'grid'  # 'grid' 'dotted' 'ruled' 'blank'
+pattern2    = 'table'
 
-grid_color = np.array([210, 210, 210, 255]) / 255
-line_color = np.array([0, 0, 0, 255]) / 255
-background_color = np.array([255, 255, 255, 255]) / 255
-table_color = np.array([210, 210, 210, 255]) / 255
-grid_color[3] = 1               # grid opacity    
-line_color[3] = 1               # line opacity
-background_color[3] = 1         # background opacity
-table_color[3] = 1              # table opacity
+# grid_color          = np.array([30, 30, 30, 255]) / 255
+# line_color          = np.array([196, 21, 30, 255]) / 255
+# bg_color            = np.array([0, 0, 0, 255]) / 255
+# table_color         = np.array([30, 30, 30, 255]) / 255
+# grid_color[3]       = 1                 # grid opacity
+# line_color[3]       = 1                 # line opacity
+# bg_color[3] = 1                         # bg opacity
+# table_color[3]      = 1                 # table opacity
 
-grid_size = 5
+grid_color      = (210, 210, 210, 150)
+line_color      = (196, 21, 30)
+bg_color        = "#ffffff"
+table_color     = (210, 210, 210, 255)
+
+# these opacities will be overridden if the colors having opacity e.g. - rgba, hex with opacity #12345678
+grid_opacity    = 1                 # grid opacity
+line_opacity    = 0.7               # line opacity
+bg_opacity      = 0.4               # bg opacity
+table_opacity   = 0.1               # table opacity
+
+grid_size       = 7.5
 grid_line_width = 0.1
-line_width = 0.25
+line_width      = 0.25
 
-title_perc = np.array([0,4])
-cue_perc_left = np.array([0,5])
-cue_perc_right = np.array([0,5])
-summary_perc = np.array([0,15])
+title_perc      = np.array([0,4])
+cue_perc_left   = np.array([0,5])
+cue_perc_right  = np.array([0,5])
+summary_perc    = np.array([0,15])
 
-rows = 1
+rows    = 1
 columns = 2
-margin = np.array([0, 0, 0, 0])
+margin  = np.array([0, 0, 0, 0])
 
-''' For single pdf '''
+
+
+grid_color          = convert_color.convert_color(grid_color, "rgba", grid_opacity) / 255
+line_color          = convert_color.convert_color(line_color, "rgba", line_opacity*255)/ 255
+bg_color            = convert_color.convert_color(bg_color, "rgba", bg_opacity*255)/ 255
+table_color         = convert_color.convert_color(table_color, "rgba", table_opacity*255)/ 255
+
+# ''' For single pdf '''
 
 # title_perc = np.array([5])
 # cue_perc_left = np.array([5])
 # cue_perc_right = np.array([10])
 # summary_perc = np.array([10])
 # patterned_pdf = PatternedPDF(output_folder, pdf_name, paper_width, paper_height, pattern, pattern2, grid_color, line_color,
-#                                 background_color, table_color, grid_size, grid_line_width, line_width, cue_perc_left, cue_perc_right, summary_perc, title_perc,
+#                                 bg_color, table_color, grid_size, grid_line_width, line_width, cue_perc_left, cue_perc_right, summary_perc, title_perc,
 #                                 rows, columns, margin)
 # doc = patterned_pdf.create_patterned_pdf()
 # doc.save()
@@ -365,7 +384,7 @@ for title in title_perc:
                     pdf_name = f'{pattern} - (title, cue (L-R), summary) - ({title}, {cue_left}-{cue_right}, {summary})%'
 
                     patterned_pdf = PatternedPDF(output_folder, pdf_name, paper_width, paper_height, pattern, pattern2, grid_color, line_color,
-                                                background_color, table_color, grid_size, grid_line_width, line_width, cue_left, cue_right, summary, title,
+                                                bg_color, table_color, grid_size, grid_line_width, line_width, cue_left, cue_right, summary, title,
                                                 rows, columns, margin)
                     doc = patterned_pdf.create_patterned_pdf()
                     doc.save()
@@ -386,20 +405,22 @@ for title in title_perc:
                         pdf_name = f'{pattern} - (title, cue (L-R), summary) - ({title}, {cue_left}-{cue_right}, {summary})%'
                         
                         patterned_pdf = PatternedPDF(output_folder2, pdf_name, paper_width, paper_height, pattern, pattern2, grid_color, line_color,
-                                                    background_color, table_color, grid_size, grid_line_width, line_width, cue_left, cue_right, summary, title,
+                                                    bg_color, table_color, grid_size, grid_line_width, line_width, cue_left, cue_right, summary, title,
                                                     rows, columns, margin)
                         doc = patterned_pdf.create_patterned_pdf()
                         doc.save()
 
 
-title_perc = np.array([4])
-cue_perc_left = np.array([5])
-cue_perc_right = np.array([5])
-summary_perc = np.array([0])
-rows = 1
+# templates with coloums and rows - ######## to-do
+title_perc      = np.array([4])
+cue_perc_left   = np.array([5])
+cue_perc_right  = np.array([5])
+summary_perc    = np.array([0])
+rows    = 1
 columns = 2
-output_folder2 = f'{output_folder}/table'
-table_color = np.array([0, 0, 0, 255]) / 255
+output_folder2  = f'{output_folder}/table'
+table_color     = (196, 21, 30, 255)
+table_color     = convert_color.convert_color(table_color, "rgba", table_opacity*255)/ 255
 
 for title in title_perc:
     for cue_left in cue_perc_left:
@@ -409,7 +430,7 @@ for title in title_perc:
                     pdf_name = f'{pattern} - table {rows}x{columns}'
                     
                     patterned_pdf = PatternedPDF(output_folder2, pdf_name, paper_width, paper_height, pattern, pattern2, grid_color, line_color,
-                                                background_color, table_color, grid_size, grid_line_width, line_width, cue_left, cue_right, summary, title,
+                                                bg_color, table_color, grid_size, grid_line_width, line_width, cue_left, cue_right, summary, title,
                                                 rows, columns, margin)
                     doc = patterned_pdf.create_patterned_pdf()
                     doc.save()
